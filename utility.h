@@ -4,10 +4,10 @@
 #include <limits>
 #include <random>
 
-const double pi = 3.1415926535897932385;
+const double PI = 3.1415926535897932385;
 
-inline double degrees_to_radians(double degrees) {
-    return degrees * pi / 180.0;
+double degrees_to_radians(double degrees) {
+    return degrees * PI / 180.0;
 }
 
 double random_double() {
@@ -21,6 +21,7 @@ double random_double(double min, double max) {
 }
 
 double random_int(int min, int max) {
+    // range [min, max]
     return int(random_double(min, max + 1));
 }
 

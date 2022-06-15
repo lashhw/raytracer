@@ -1,13 +1,10 @@
 #ifndef RAYTRACER_VEC3_H
 #define RAYTRACER_VEC3_H
 
-#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include "utility.h"
 
-using std::sqrt;
-using std::round;
 using std::clamp;
 
 class vec3 {
@@ -58,10 +55,6 @@ public:
         out << round(255.0 * r) << ' '
             << round(255.0 * g) << ' '
             << round(255.0 * b) << '\n';
-    }
-
-    static vec3 random() {
-        return vec3(random_double(), random_double(), random_double());
     }
 
     static vec3 random(double min, double max) {

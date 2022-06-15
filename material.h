@@ -4,6 +4,7 @@
 #include "texture.h"
 #include "hittable.h"
 #include "hit_record.h"
+
 using std::shared_ptr;
 using std::make_shared;
 
@@ -12,15 +13,17 @@ public:
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const = 0;
-    virtual vec3 emitted(double u, double v, const vec3& p) const {
-        return vec3(0,0,0);
+
+    virtual vec3 emitted(double u, double v, const vec3 &p) const {
+        return vec3(0, 0, 0);
     }
 };
 
 class lambertian : public material {
 public:
-    lambertian(const vec3& a) : albedo(make_shared<solid_color>(a)) { }
-    lambertian(shared_ptr<texture> a) : albedo(a) { }
+    lambertian(const vec3 &a) : albedo(make_shared<solid_color>(a)) {}
+
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
 
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
@@ -41,7 +44,7 @@ private:
     double fuzz;
 
 public:
-    metal(const vec3& albedo, double fuzz) : albedo(albedo), fuzz(fuzz) {}
+    metal(const vec3 &albedo, double fuzz) : albedo(albedo), fuzz(fuzz) {}
 
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
@@ -58,9 +61,9 @@ private:
     double ir; // Index of Refraction
     static double reflectance(double cosine, double ref_idx) {
         // Use Schlick's approximation for reflectance.
-        auto r0 = (1-ref_idx) / (1+ref_idx);
-        r0 = r0*r0;
-        return r0 + (1-r0)*pow((1 - cosine),5);
+        auto r0 = (1 - ref_idx) / (1 + ref_idx);
+        r0 = r0 * r0;
+        return r0 + (1 - r0) * pow((1 - cosine), 5);
     }
 
 public:
@@ -74,7 +77,7 @@ public:
 
         vec3 unit_direction = r_in.direction().unit_vector();
         double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
-        double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+        double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
         bool cannot_refract = refraction_ratio * sin_theta > 1.0;
         vec3 direction;
@@ -89,18 +92,19 @@ public:
     }
 };
 
-class diffuse_light : public material  {
+class diffuse_light : public material {
 public:
     diffuse_light(shared_ptr<texture> a) : emit(a) {}
+
     diffuse_light(vec3 c) : emit(make_shared<solid_color>(c)) {}
 
     virtual bool scatter(
-            const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered
+            const ray &r_in, const hit_record &rec, vec3 &attenuation, ray &scattered
     ) const override {
         return false;
     }
 
-    virtual vec3 emitted(double u, double v, const vec3& p) const override {
+    virtual vec3 emitted(double u, double v, const vec3 &p) const override {
         return emit->value(u, v, p);
     }
 
