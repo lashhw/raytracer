@@ -37,7 +37,7 @@ int main() {
     const double ASPECT_RATIO = 16.0 / 9.0;
     const int IMAGE_WIDTH = 500;
     const int IMAGE_HEIGHT = IMAGE_WIDTH / ASPECT_RATIO;
-    const int SAMPLES_PER_PIXEL = 20;
+    const int SAMPLES_PER_PIXEL = 50;
     const int MAX_DEPTH = 50;
 
     hittable_list world;

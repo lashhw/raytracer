@@ -3,18 +3,21 @@
 using std::shared_ptr;
 
 class vec3;
+
 class ray;
+
 class material;
+
 struct hit_record {
     double t;
     vec3 p;
-    vec3 normal;
     bool front_face;
+    vec3 normal;
     shared_ptr<material> mat_ptr;
     double u;
     double v;
 
-    void set_normal(const ray &r, const vec3& outward_normal) {
+    void set_normal(const ray &r, const vec3 &outward_normal) {
         front_face = dot(r.direction(), outward_normal) < 0;
         normal = front_face ? outward_normal : -outward_normal;
     }
