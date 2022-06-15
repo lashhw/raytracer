@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_MATERIAL_H
-#define RTWEEKEND_MATERIAL_H
+#ifndef RAYTRACER_MATERIAL_H
+#define RAYTRACER_MATERIAL_H
 
 #include "texture.h"
 #include "hittable.h"
@@ -108,4 +108,4 @@ public:
     shared_ptr<texture> emit;
 };
 
-#endif //RTWEEKEND_MATERIAL_H
+#endif //RAYTRACER_MATERIAL_H

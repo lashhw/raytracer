@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_AABB_H
-#define RTWEEKEND_AABB_H
+#ifndef RAYTRACER_AABB_H
+#define RAYTRACER_AABB_H
 
 #include "vec3.h"
 #include "ray.h"
@@ -40,4 +40,4 @@ aabb surrounding_box(aabb box1, aabb box2) {
     return aabb(minimum, maximum);
 }
 
-#endif //RTWEEKEND_AABB_H
+#endif //RAYTRACER_AABB_H

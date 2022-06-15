@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_RTWEEKEND_H
-#define RTWEEKEND_RTWEEKEND_H
+#ifndef RAYTRACER_RAYTRACER_H
+#define RAYTRACER_RAYTRACER_H
 
 #include "vec3.h"
 #include "ray.h"
@@ -8,4 +8,4 @@
 #include "utility.h"
 #include "material.h"
 
-#endif //RTWEEKEND_RTWEEKEND_H
+#endif //RAYTRACER_RAYTRACER_H

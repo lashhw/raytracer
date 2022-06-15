@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_HIT_RECORD_H
-#define RTWEEKEND_HIT_RECORD_H
+#ifndef RAYTRACER_HIT_RECORD_H
+#define RAYTRACER_HIT_RECORD_H
 using std::shared_ptr;
 
 class vec3;
@@ -20,4 +20,4 @@ struct hit_record {
     }
 };
 
-#endif //RTWEEKEND_HIT_RECORD_H
+#endif //RAYTRACER_HIT_RECORD_H

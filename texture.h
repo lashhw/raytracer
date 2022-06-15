@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_TEXTURE_H
-#define RTWEEKEND_TEXTURE_H
+#ifndef RAYTRACER_TEXTURE_H
+#define RAYTRACER_TEXTURE_H
 
 #include "vec3.h"
 
@@ -47,4 +47,4 @@ public:
     shared_ptr<texture> even;
 };
 
-#endif //RTWEEKEND_TEXTURE_H
+#endif //RAYTRACER_TEXTURE_H

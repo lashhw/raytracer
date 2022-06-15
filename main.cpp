@@ -1,4 +1,4 @@
-#include "rtweekend.h"
+#include "raytracer.h"
 
 #include <iostream>
 #include <memory>
@@ -37,7 +37,7 @@ int main() {
     const double ASPECT_RATIO = 16.0 / 9.0;
     const int IMAGE_WIDTH = 500;
     const int IMAGE_HEIGHT = IMAGE_WIDTH / ASPECT_RATIO;
-    const int SAMPLES_PER_PIXEL = 200;
+    const int SAMPLES_PER_PIXEL = 20;
     const int MAX_DEPTH = 50;
 
     hittable_list world;
@@ -69,7 +69,7 @@ int main() {
                 pixel_color = pixel_color + ray_color(cam.get_ray(u, v), background, world, MAX_DEPTH);
             }
             pixel_color = pixel_color / SAMPLES_PER_PIXEL;
-            write_color(file, pixel_color);
+            pixel_color.write_color(file);
         }
     }
 }

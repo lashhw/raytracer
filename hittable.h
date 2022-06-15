@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_HITTABLE_H
-#define RTWEEKEND_HITTABLE_H
+#ifndef RAYTRACER_HITTABLE_H
+#define RAYTRACER_HITTABLE_H
 
 #include <memory>
 #include <vector>
@@ -275,4 +275,4 @@ public:
     double y0, y1, z0, z1, k;
 };
 
-#endif //RTWEEKEND_HITTABLE_H
+#endif //RAYTRACER_HITTABLE_H

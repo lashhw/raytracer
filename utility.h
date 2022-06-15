@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_UTILITY_H
-#define RTWEEKEND_UTILITY_H
+#ifndef RAYTRACER_UTILITY_H
+#define RAYTRACER_UTILITY_H
 
 #include <limits>
 #include <random>
@@ -24,4 +24,4 @@ double random_int(int min, int max) {
     return int(random_double(min, max + 1));
 }
 
-#endif //RTWEEKEND_UTILITY_H
+#endif //RAYTRACER_UTILITY_H

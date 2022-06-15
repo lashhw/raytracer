@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_CAMERA_H
-#define RTWEEKEND_CAMERA_H
+#ifndef RAYTRACER_CAMERA_H
+#define RAYTRACER_CAMERA_H
 
 #include "vec3.h"
 #include "ray.h"
@@ -48,4 +48,4 @@ private:
     double lens_radius;
 };
 
-#endif //RTWEEKEND_CAMERA_H
+#endif //RAYTRACER_CAMERA_H

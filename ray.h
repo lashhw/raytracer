@@ -1,5 +1,5 @@
-#ifndef RTWEEKEND_RAY_H
-#define RTWEEKEND_RAY_H
+#ifndef RAYTRACER_RAY_H
+#define RAYTRACER_RAY_H
 
 #include "vec3.h"
 
@@ -17,4 +17,4 @@ public:
     }
 };
 
-#endif //RTWEEKEND_RAY_H
+#endif //RAYTRACER_RAY_H
