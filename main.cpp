@@ -37,8 +37,8 @@ int main() {
     const double ASPECT_RATIO = 16.0 / 9.0;
     const int IMAGE_WIDTH = 500;
     const int IMAGE_HEIGHT = IMAGE_WIDTH / ASPECT_RATIO;
-    const int SAMPLES_PER_PIXEL = 50;
-    const int MAX_DEPTH = 50;
+    const int SAMPLES_PER_PIXEL = 200;
+    const int MAX_DEPTH = 8;
 
     hittable_list world;
     auto checker = make_shared<checker_texture>(vec3(0.2, 0.3, 0.1), vec3(0.9, 0.9, 0.9));

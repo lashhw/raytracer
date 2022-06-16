@@ -18,6 +18,7 @@ public:
         double viewpoint_height = 2.0 * tan(vfov_rad / 2);
         double viewpoint_width = viewpoint_height * aspect_ratio;
 
+        vec3 w;
         w = (lookfrom - lookat).unit_vector();
         u = -(vup - dot(vup, w) * w).unit_vector();
         v = cross(w, u);
@@ -39,13 +40,12 @@ public:
     }
 
 private:
+    vec3 u;
+    vec3 v;
     vec3 origin;
     vec3 vertical;
     vec3 horizontal;
     vec3 upper_left_corner;
-    vec3 u;
-    vec3 v;
-    vec3 w;
     double lens_radius;
 };
 

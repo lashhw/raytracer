@@ -100,7 +100,6 @@ public:
         if (x < x0 || x > x1 || y < y0 || y > y1)
             return false;
 
-        rec.t = t;
         rec.p = r.at(t);
         auto outward_normal = vec3(0, 0, 1);
         rec.set_normal(r, outward_normal);
