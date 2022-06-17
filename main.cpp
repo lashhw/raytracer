@@ -67,7 +67,7 @@ int main() {
     double aspect_ratio = 1.0;
     int image_width = 600;
     int image_height = image_width / aspect_ratio;
-    int samples_per_pixel = 1000;
+    int samples_per_pixel = 10000;
     int max_depth = 16;
     vec3 background = vec3(0, 0, 0);
     vec3 lookfrom(278, 278, -800), lookat(278, 278, 0);
