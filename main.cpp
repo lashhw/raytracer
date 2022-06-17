@@ -1,8 +1,10 @@
-#include "raytracer.h"
-
 #include <iostream>
 #include <memory>
 #include <fstream>
+
+#include "camera.h"
+#include "hittable.h"
+
 using std::make_shared;
 
 vec3 ray_color(const ray& r, const vec3& background, const hittable& world, int depth) {
@@ -10,7 +12,7 @@ vec3 ray_color(const ray& r, const vec3& background, const hittable& world, int 
     shared_ptr<material> hit_mat;
     if (depth <= 0) return vec3(0, 0, 0);
     if (world.hit(r, 0.001, INFINITY, rec, hit_mat)) {
-        vec3 emitted = hit_mat->emitted(rec.u, rec.v, rec.p);
+        vec3 emitted = hit_mat->emitted(rec.u, rec.v);
         vec3 attenuation;
         ray scattered;
         if (!hit_mat->scatter(r, rec, attenuation, scattered))
@@ -33,8 +35,6 @@ void add_random_sphere(hittable_list &world) {
 }
 
 int main() {
-    std::ofstream file("image.ppm");
-
     /*
     // scene with lots of balls
     const double ASPECT_RATIO = 16.0 / 9.0;
@@ -110,6 +110,7 @@ int main() {
             vfov, aspect_ratio, aperture, (lookat - lookfrom).length()
     );
 
+    std::ofstream file("image.ppm");
     file << "P3\n" << image_width << ' ' << image_height << "\n255\n";
     for (int i = 0; i < image_height; i++) {
         std::cout << "Processing row " << i << '\n';

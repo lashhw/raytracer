@@ -1,11 +1,14 @@
 #ifndef RAYTRACER_TEXTURE_H
 #define RAYTRACER_TEXTURE_H
 
+#include <memory>
+
 #include "vec3.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 using std::make_shared;
+using std::shared_ptr;
 using std::cerr;
 
 class texture {

@@ -2,7 +2,6 @@
 #define RAYTRACER_MATERIAL_H
 
 #include "texture.h"
-#include "hittable.h"
 #include "hit_record.h"
 
 using std::shared_ptr;
@@ -14,7 +13,7 @@ public:
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const = 0;
 
-    virtual vec3 emitted(double u, double v, const vec3 &p) const {
+    virtual vec3 emitted(double u, double v) const {
         return vec3(0, 0, 0);
     }
 };
@@ -107,7 +106,7 @@ public:
         return false;
     }
 
-    virtual vec3 emitted(double u, double v, const vec3 &p) const override {
+    virtual vec3 emitted(double u, double v) const override {
         return emit->value(u, v);
     }
 

@@ -3,8 +3,6 @@
 
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include "ray.h"
 #include "hit_record.h"
 #include "material.h"
 
@@ -44,7 +42,6 @@ public:
         vec3 outward_normal = (rec.p - center) / radius;
         rec.set_normal(r, outward_normal);
         get_sphere_uv(outward_normal, rec.u, rec.v);
-
         hit_mat = mat_ptr;
 
         return true;
@@ -109,7 +106,6 @@ public:
         rec.set_normal(r, outward_normal);
         rec.u = (x - x0) / (x1 - x0);
         rec.v = (y - y0) / (y1 - y0);
-
         hit_mat = mat_ptr;
 
         return true;
@@ -141,7 +137,6 @@ public:
         rec.set_normal(r, outward_normal);
         rec.u = (x - x0) / (x1 - x0);
         rec.v = (z - z0) / (z1 - z0);
-
         hit_mat = mat_ptr;
 
         return true;
@@ -173,7 +168,6 @@ public:
         rec.set_normal(r, outward_normal);
         rec.u = (y - y0) / (y1 - y0);
         rec.v = (z - z0) / (z1 - z0);
-
         hit_mat = mat_ptr;
 
         return true;
@@ -187,14 +181,14 @@ private:
 class box : public hittable {
 public:
     box(const vec3 &p0, const vec3 &p1, shared_ptr<material> mat_ptr) {
-        sides.add(make_shared<xy_rect>(p0.x(), p1.x(), p0.y(), p1.y(), p1.z(), mat_ptr));
         sides.add(make_shared<xy_rect>(p0.x(), p1.x(), p0.y(), p1.y(), p0.z(), mat_ptr));
+        sides.add(make_shared<xy_rect>(p0.x(), p1.x(), p0.y(), p1.y(), p1.z(), mat_ptr));
 
-        sides.add(make_shared<xz_rect>(p0.x(), p1.x(), p0.z(), p1.z(), p1.y(), mat_ptr));
         sides.add(make_shared<xz_rect>(p0.x(), p1.x(), p0.z(), p1.z(), p0.y(), mat_ptr));
+        sides.add(make_shared<xz_rect>(p0.x(), p1.x(), p0.z(), p1.z(), p1.y(), mat_ptr));
 
-        sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p1.x(), mat_ptr));
         sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p0.x(), mat_ptr));
+        sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p1.x(), mat_ptr));
     }
 
     virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {

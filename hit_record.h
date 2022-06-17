@@ -2,7 +2,6 @@
 #define RAYTRACER_HIT_RECORD_H
 
 #include "ray.h"
-#include "vec3.h"
 
 using std::shared_ptr;
 
