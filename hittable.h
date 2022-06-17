@@ -5,13 +5,15 @@
 #include <vector>
 #include "ray.h"
 #include "hit_record.h"
+#include "material.h"
 
 using std::shared_ptr;
 using std::vector;
 
 class hittable {
 public:
-    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const = 0;
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const = 0;
 };
 
 class sphere : public hittable {
@@ -19,7 +21,8 @@ public:
     sphere(const vec3 &center, double radius, shared_ptr<material> mat_ptr) : center(center), radius(radius),
                                                                               mat_ptr(mat_ptr) {}
 
-    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override {
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
         vec3 amc = r.origin() - center;
         double a = dot(r.direction(), r.direction());
         double b = 2.0 * dot(amc, r.direction());
@@ -39,8 +42,9 @@ public:
         rec.p = r.at(root);
         vec3 outward_normal = (rec.p - center) / radius;
         rec.set_normal(r, outward_normal);
-        rec.mat_ptr = mat_ptr;
         get_sphere_uv(outward_normal, rec.u, rec.v);
+
+        hit_mat = mat_ptr;
 
         return true;
     }
@@ -72,10 +76,11 @@ public:
 public:
     void add(shared_ptr<hittable> object) { objects.push_back(object); }
 
-    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override {
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
         bool hit_anything = false;
         for (auto &object: objects) {
-            if (object->hit(r, t_min, t_max, rec)) {
+            if (object->hit(r, t_min, t_max, rec, hit_mat)) {
                 hit_anything = true;
                 t_max = rec.t;
             }
@@ -91,7 +96,8 @@ public:
     xy_rect(double x0, double x1, double y0, double y1, double z, shared_ptr<material> mat_ptr)
             : x0(x0), x1(x1), y0(y0), y1(y1), z(z), mat_ptr(mat_ptr) {};
 
-    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override {
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
         auto t = (z - r.origin().z()) / r.direction().z();
         if (t < t_min || t > t_max)
             return false;
@@ -103,9 +109,10 @@ public:
         rec.p = r.at(t);
         auto outward_normal = vec3(0, 0, 1);
         rec.set_normal(r, outward_normal);
-        rec.mat_ptr = mat_ptr;
         rec.u = (x - x0) / (x1 - x0);
         rec.v = (y - y0) / (y1 - y0);
+
+        hit_mat = mat_ptr;
 
         return true;
     }

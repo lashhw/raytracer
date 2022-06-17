@@ -7,12 +7,13 @@ using std::make_shared;
 
 vec3 ray_color(const ray& r, const vec3& background, const hittable& world, int depth) {
     hit_record rec;
+    shared_ptr<material> hit_mat;
     if (depth <= 0) return vec3(0, 0, 0);
-    if (world.hit(r, 0.001, INFINITY, rec)) {
-        vec3 emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+    if (world.hit(r, 0.001, INFINITY, rec, hit_mat)) {
+        vec3 emitted = hit_mat->emitted(rec.u, rec.v, rec.p);
         vec3 attenuation;
         ray scattered;
-        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        if (!hit_mat->scatter(r, rec, attenuation, scattered))
             return emitted;
         return emitted + attenuation * ray_color(scattered, background, world, depth - 1);
     }

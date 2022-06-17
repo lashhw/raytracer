@@ -115,7 +115,7 @@ vec3 reflect(const vec3 &v, const vec3 &n) {
 }
 
 vec3 refract(const vec3 &u, const vec3 &n, double eta_ratio) {
-    double cos_theta = dot(-u, n);
+    double cos_theta = fmin(dot(-u, n), 1.0);
     vec3 v_parallel = eta_ratio * (u + cos_theta * n);
     vec3 v_perp = -sqrt(1 - v_parallel.length_squared()) * n;
     return v_parallel + v_perp;

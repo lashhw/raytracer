@@ -1,19 +1,16 @@
 #ifndef RAYTRACER_HIT_RECORD_H
 #define RAYTRACER_HIT_RECORD_H
+
+#include "ray.h"
+#include "vec3.h"
+
 using std::shared_ptr;
-
-class vec3;
-
-class ray;
-
-class material;
 
 struct hit_record {
     double t;
     vec3 p;
     bool front_face;
     vec3 normal;
-    shared_ptr<material> mat_ptr;
     double u;
     double v;
 

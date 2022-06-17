@@ -21,62 +21,62 @@ public:
 
 class lambertian : public material {
 public:
-    lambertian(const vec3 &a) : albedo(make_shared<solid_color>(a)) {}
+    lambertian(const vec3 &albedo) : texture_ptr(make_shared<solid_color>(albedo)) {}
 
-    lambertian(shared_ptr<texture> a) : albedo(a) {}
+    lambertian(shared_ptr<texture> texture_ptr) : texture_ptr(texture_ptr) {}
 
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const override {
         vec3 scatter_direction = rec.normal + vec3::random_in_unit_sphere().unit_vector();
         if (scatter_direction.near_zero()) scatter_direction = rec.normal;
+        attenuation = texture_ptr->value(rec.u, rec.v, rec.p);
         scattered = ray(rec.p, scatter_direction);
-        attenuation = albedo->value(rec.u, rec.v, rec.p);
         return true;
     }
 
-    shared_ptr<texture> albedo;
+private:
+    shared_ptr<texture> texture_ptr;
 };
 
 class metal : public material {
-private:
-    vec3 albedo;
-    double fuzz;
-
 public:
-    metal(const vec3 &albedo, double fuzz) : albedo(albedo), fuzz(fuzz) {}
+    metal(const vec3 &albedo, double fuzz) : texture_ptr(make_shared<solid_color>(albedo)), fuzz(fuzz) {}
+
+    metal(shared_ptr<texture> texture_ptr, double fuzz) : texture_ptr(texture_ptr), fuzz(fuzz) {}
 
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const override {
         vec3 reflected = reflect(r_in.direction().unit_vector(), rec.normal);
-        attenuation = albedo;
+        attenuation = texture_ptr->value(rec.u, rec.v, rec.p);
         scattered = ray(rec.p, reflected + fuzz * vec3::random_in_unit_sphere());
-        return (dot(scattered.direction(), rec.normal) > 0);
+        return true;
     }
+
+private:
+    shared_ptr<texture> texture_ptr;
+    double fuzz;
 };
 
 class dielectric : public material {
-private:
-    double ir; // Index of Refraction
-
 public:
-    dielectric(double index_of_refraction) : ir(index_of_refraction) {}
+    dielectric(double index_of_refraction) : index_of_refraction(index_of_refraction) {}
 
     virtual bool
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const override {
         attenuation = vec3(1.0, 1.0, 1.0);
-        double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
+        double refraction_ratio = rec.front_face ? (1.0 / index_of_refraction) : index_of_refraction;
 
         vec3 unit_direction = r_in.direction().unit_vector();
         double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
         double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
         bool cannot_refract = refraction_ratio * sin_theta > 1.0;
-        vec3 direction;
 
-        if (cannot_refract)
+        vec3 direction;
+        if (cannot_refract || random_double() < reflectance(cos_theta))
             direction = reflect(unit_direction, rec.normal);
         else
             direction = refract(unit_direction, rec.normal, refraction_ratio);
@@ -84,11 +84,20 @@ public:
         scattered = ray(rec.p, direction);
         return true;
     }
+
+private:
+    double index_of_refraction;
+    double reflectance(double cos_theta) const {
+        // Use Schlick's approximation for reflectance
+        auto r0 = (1 - index_of_refraction) / (1 + index_of_refraction);
+        r0 = r0 * r0;
+        return r0 + (1 - r0) * pow((1 - cos_theta), 5);
+    }
 };
 
 class diffuse_light : public material {
 public:
-    diffuse_light(shared_ptr<texture> a) : emit(a) {}
+    diffuse_light(shared_ptr<texture> emit) : emit(emit) {}
 
     diffuse_light(vec3 c) : emit(make_shared<solid_color>(c)) {}
 
