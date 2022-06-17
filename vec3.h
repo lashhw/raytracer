@@ -8,8 +8,6 @@
 using std::clamp;
 
 class vec3 {
-private:
-    double e[3];
 public:
     vec3() {}
 
@@ -74,6 +72,9 @@ public:
             if (p.length_squared() <= 1) return p;
         }
     }
+
+public:
+    double e[3];
 };
 
 vec3 operator+(const vec3 &v1, const vec3 &v2) {

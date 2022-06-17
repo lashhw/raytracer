@@ -85,6 +85,14 @@ int main() {
     world.add(make_shared<yz_rect>(0, 555, 0, 555, 0, white));
     world.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
     world.add(make_shared<yz_rect>(0, 555, 0, 555, 555, white));
+    shared_ptr<hittable> box1 = make_shared<box>(vec3(0, 0, 0), vec3(330, 165, 165), white);
+    box1 = make_shared<rotate_x>(box1, 15);
+    box1 = make_shared<translate>(box1, vec3(225, 265, 295));
+    world.add(box1);
+    shared_ptr<hittable> box2 = make_shared<box>(vec3(0, 0, 0), vec3(165, 165, 165), white);
+    box2 = make_shared<rotate_x>(box2, -18);
+    box2 = make_shared<translate>(box2, vec3(390, 130, 65));
+    world.add(box2);
 
     camera cam(
             lookfrom, lookat, vec3(-1, 0, 0),

@@ -184,4 +184,88 @@ private:
     shared_ptr<material> mat_ptr;
 };
 
+class box : public hittable {
+public:
+    box(const vec3 &p0, const vec3 &p1, shared_ptr<material> mat_ptr) {
+        sides.add(make_shared<xy_rect>(p0.x(), p1.x(), p0.y(), p1.y(), p1.z(), mat_ptr));
+        sides.add(make_shared<xy_rect>(p0.x(), p1.x(), p0.y(), p1.y(), p0.z(), mat_ptr));
+
+        sides.add(make_shared<xz_rect>(p0.x(), p1.x(), p0.z(), p1.z(), p1.y(), mat_ptr));
+        sides.add(make_shared<xz_rect>(p0.x(), p1.x(), p0.z(), p1.z(), p0.y(), mat_ptr));
+
+        sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p1.x(), mat_ptr));
+        sides.add(make_shared<yz_rect>(p0.y(), p1.y(), p0.z(), p1.z(), p0.x(), mat_ptr));
+    }
+
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
+        return sides.hit(r, t_min, t_max, rec, hit_mat);
+    }
+
+private:
+    hittable_list sides;
+};
+
+class translate : public hittable {
+public:
+    translate(shared_ptr<hittable> hittable_ptr, const vec3& offset)
+            : hittable_ptr(hittable_ptr), offset(offset) {}
+
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
+        ray moved_r(r.origin() - offset, r.direction());
+        if (!hittable_ptr->hit(moved_r, t_min, t_max, rec, hit_mat))
+            return false;
+
+        rec.p = rec.p + offset;
+        return true;
+    }
+
+public:
+    shared_ptr<hittable> hittable_ptr;
+    vec3 offset;
+};
+
+class rotate_x : public hittable {
+public:
+    rotate_x(shared_ptr<hittable> hittable_ptr, double angle) : hittable_ptr(hittable_ptr) {
+        double radians = degrees_to_radians(angle);
+        sin_theta = sin(radians);
+        cos_theta = cos(radians);
+    }
+
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
+        vec3 origin = r.origin();
+        vec3 direction = r.direction();
+
+        origin.e[1] = cos_theta * r.origin()[1] - sin_theta * r.origin()[2];
+        origin.e[2] = sin_theta * r.origin()[1] + cos_theta * r.origin()[2];
+
+        direction.e[1] = cos_theta * r.direction()[1] - sin_theta * r.direction()[2];
+        direction.e[2] = sin_theta * r.direction()[1] + cos_theta * r.direction()[2];
+
+        ray rotated_r(origin, direction);
+
+        if (!hittable_ptr->hit(rotated_r, t_min, t_max, rec, hit_mat))
+            return false;
+
+        vec3 p = rec.p;
+        vec3 normal = rec.normal;
+
+        p.e[1] =  cos_theta * rec.p[1] + sin_theta * rec.p[2];
+        p.e[2] = -sin_theta * rec.p[1] + cos_theta * rec.p[2];
+
+        normal.e[1] =  cos_theta * rec.normal[1] + sin_theta * rec.normal[2];
+        normal.e[2] = -sin_theta * rec.normal[1] + cos_theta * rec.normal[2];
+
+        rec.p = p;
+        rec.normal = normal;
+
+        return true;
+    }
+
+public:
+    shared_ptr<hittable> hittable_ptr;
+    double sin_theta;
+    double cos_theta;
+};
+
 #endif //RAYTRACER_HITTABLE_H
