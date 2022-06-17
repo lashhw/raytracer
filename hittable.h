@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 #include "ray.h"
 #include "hit_record.h"
 #include "material.h"
@@ -56,17 +57,15 @@ private:
 
     static void get_sphere_uv(const vec3 &p, double &u, double &v) {
         // p: a given p on the sphere of radius one, centered at the origin.
-        // u: returned value [0,1] of angle around the Y axis from X=-1.
-        // v: returned value [0,1] of angle from Y=-1 to Y=+1.
-        //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
-        //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
-        //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+        // u: returned value [0, 1] of angle from X=-1 to X=+1.
+        // v: returned value [0, 1] of angle around the X axis from Y=-1.
 
-        auto theta = acos(-p.y());
-        auto phi = atan2(-p.z(), p.x()) + PI;
+        auto phi = atan2(p.z(), -p.y());
+        auto theta = acos(-p.x());
 
-        u = phi / (2 * PI);
-        v = theta / PI;
+        u = theta / PI;
+        if (phi < 0) v = (phi + 2 * PI) / (2 * PI);
+        else v = phi / (2 * PI);
     }
 };
 
@@ -91,23 +90,22 @@ public:
 
 class xy_rect : public hittable {
 public:
-    xy_rect() {}
-
     xy_rect(double x0, double x1, double y0, double y1, double z, shared_ptr<material> mat_ptr)
             : x0(x0), x1(x1), y0(y0), y1(y1), z(z), mat_ptr(mat_ptr) {};
 
     virtual bool
     hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
-        auto t = (z - r.origin().z()) / r.direction().z();
+        double t = (z - r.origin().z()) / r.direction().z();
         if (t < t_min || t > t_max)
             return false;
-        auto x = r.origin().x() + t * r.direction().x();
-        auto y = r.origin().y() + t * r.direction().y();
+        double x = r.origin().x() + t * r.direction().x();
+        double y = r.origin().y() + t * r.direction().y();
         if (x < x0 || x > x1 || y < y0 || y > y1)
             return false;
 
+        rec.t = t;
         rec.p = r.at(t);
-        auto outward_normal = vec3(0, 0, 1);
+        vec3 outward_normal = vec3(0, 0, 1);
         rec.set_normal(r, outward_normal);
         rec.u = (x - x0) / (x1 - x0);
         rec.v = (y - y0) / (y1 - y0);
@@ -117,8 +115,72 @@ public:
         return true;
     }
 
-public:
+private:
     double x0, x1, y0, y1, z;
+    shared_ptr<material> mat_ptr;
+};
+
+class xz_rect : public hittable {
+public:
+    xz_rect(double x0, double x1, double z0, double z1, double y, shared_ptr<material> mat_ptr)
+            : x0(x0), x1(x1), z0(z0), z1(z1), y(y), mat_ptr(mat_ptr) {};
+
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
+        double t = (y - r.origin().y()) / r.direction().y();
+        if (t < t_min || t > t_max)
+            return false;
+        double x = r.origin().x() + t * r.direction().x();
+        double z = r.origin().z() + t * r.direction().z();
+        if (x < x0 || x > x1 || z < z0 || z > z1)
+            return false;
+
+        rec.t = t;
+        rec.p = r.at(t);
+        vec3 outward_normal = vec3(0, 1, 0);
+        rec.set_normal(r, outward_normal);
+        rec.u = (x - x0) / (x1 - x0);
+        rec.v = (z - z0) / (z1 - z0);
+
+        hit_mat = mat_ptr;
+
+        return true;
+    }
+
+private:
+    double x0, x1, z0, z1, y;
+    shared_ptr<material> mat_ptr;
+};
+
+class yz_rect : public hittable {
+public:
+    yz_rect(double y0, double y1, double z0, double z1, double x, shared_ptr<material> mat_ptr)
+            : y0(y0), y1(y1), z0(z0), z1(z1), x(x), mat_ptr(mat_ptr) {};
+
+    virtual bool
+    hit(const ray &r, double t_min, double t_max, hit_record &rec, shared_ptr<material> &hit_mat) const override {
+        double t = (x - r.origin().x()) / r.direction().x();
+        if (t < t_min || t > t_max)
+            return false;
+        double y = r.origin().y() + t * r.direction().y();
+        double z = r.origin().z() + t * r.direction().z();
+        if (y < y0 || y > y1 || z < z0 || z > z1)
+            return false;
+
+        rec.t = t;
+        rec.p = r.at(t);
+        vec3 outward_normal = vec3(1, 0, 0);
+        rec.set_normal(r, outward_normal);
+        rec.u = (y - y0) / (y1 - y0);
+        rec.v = (z - z0) / (z1 - z0);
+
+        hit_mat = mat_ptr;
+
+        return true;
+    }
+
+private:
+    double y0, y1, z0, z1, x;
     shared_ptr<material> mat_ptr;
 };
 

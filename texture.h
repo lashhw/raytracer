@@ -2,12 +2,15 @@
 #define RAYTRACER_TEXTURE_H
 
 #include "vec3.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 using std::make_shared;
+using std::cerr;
 
 class texture {
 public:
-    virtual vec3 value(double u, double v, const vec3 &p) const = 0;
+    virtual vec3 value(double u, double v) const = 0;
 };
 
 class solid_color : public texture {
@@ -17,7 +20,7 @@ public:
     solid_color(double red, double green, double blue)
             : solid_color(vec3(red, green, blue)) {}
 
-    virtual vec3 value(double u, double v, const vec3 &p) const override {
+    virtual vec3 value(double u, double v) const override {
         return color_value;
     }
 
@@ -27,25 +30,65 @@ private:
 
 class checker_texture : public texture {
 public:
-    checker_texture() {}
+    checker_texture(shared_ptr<texture> even, shared_ptr<texture> odd, int squares_per_axis)
+            : even(even), odd(odd), squares_per_axis(squares_per_axis) {}
 
-    checker_texture(shared_ptr<texture> _even, shared_ptr<texture> _odd)
-            : even(_even), odd(_odd) {}
+    checker_texture(vec3 c1, vec3 c2, int squares_per_axis)
+            : checker_texture(make_shared<solid_color>(c1), make_shared<solid_color>(c2), squares_per_axis) {}
 
-    checker_texture(vec3 c1, vec3 c2)
-            : even(make_shared<solid_color>(c1)), odd(make_shared<solid_color>(c2)) {}
-
-    virtual vec3 value(double u, double v, const vec3 &p) const override {
-        auto sines = sin(10 * p.x()) * sin(10 * p.y()) * sin(10 * p.z());
-        if (sines < 0)
-            return odd->value(u, v, p);
-        else
-            return even->value(u, v, p);
+    virtual vec3 value(double u, double v) const override {
+        int u_pos = u * squares_per_axis;
+        int v_pos = v * squares_per_axis;
+        if ((u_pos + v_pos) % 2 == 1) return odd->value(u, v);
+        else return even->value(u, v);
     }
 
-public:
+private:
     shared_ptr<texture> odd;
     shared_ptr<texture> even;
+    int squares_per_axis;
+};
+
+class image_texture : public texture {
+public:
+    image_texture(const char* filename) {
+        int n;
+        data = stbi_load(filename, &width, &height, &n, 3);
+
+        if (!data) {
+            cerr << "ERROR: Could not load texture image file '" << filename << "'.\n";
+            width = height = 0;
+        }
+
+        bytes_per_scanline = 3 * width;
+    }
+
+    ~image_texture() {
+        stbi_image_free(data);
+    }
+
+    virtual vec3 value(double u, double v) const override {
+        // If we have no texture data, then return solid cyan as a debugging aid.
+        if (data == nullptr)
+            return vec3(0, 1, 1);
+
+        auto i = int(u * height);
+        auto j = int(v * width);
+
+        // Clamp integer mapping
+        clamp(i, 0, height - 1);
+        clamp(j, 0, width - 1);
+
+        unsigned char *pixel = data + i * bytes_per_scanline + j * 3;
+
+        vec3 color(pixel[0], pixel[1], pixel[2]);
+        return color / 255.0;
+    }
+
+private:
+    unsigned char *data;
+    int width, height;
+    int bytes_per_scanline;
 };
 
 #endif //RAYTRACER_TEXTURE_H

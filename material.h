@@ -30,7 +30,7 @@ public:
             ray &scattered) const override {
         vec3 scatter_direction = rec.normal + vec3::random_in_unit_sphere().unit_vector();
         if (scatter_direction.near_zero()) scatter_direction = rec.normal;
-        attenuation = texture_ptr->value(rec.u, rec.v, rec.p);
+        attenuation = texture_ptr->value(rec.u, rec.v);
         scattered = ray(rec.p, scatter_direction);
         return true;
     }
@@ -49,7 +49,7 @@ public:
     scatter(const ray &r_in, const hit_record &rec, vec3 &attenuation,
             ray &scattered) const override {
         vec3 reflected = reflect(r_in.direction().unit_vector(), rec.normal);
-        attenuation = texture_ptr->value(rec.u, rec.v, rec.p);
+        attenuation = texture_ptr->value(rec.u, rec.v);
         scattered = ray(rec.p, reflected + fuzz * vec3::random_in_unit_sphere());
         return true;
     }
@@ -108,7 +108,7 @@ public:
     }
 
     virtual vec3 emitted(double u, double v, const vec3 &p) const override {
-        return emit->value(u, v, p);
+        return emit->value(u, v);
     }
 
 public:
