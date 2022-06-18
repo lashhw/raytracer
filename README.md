@@ -15,6 +15,6 @@ make
 ```
 
 ## Result
-| Cornell Box (1000 rays/pixel)        | Box with Balls (1000 rays/pixel)     |
-|--------------------------------------|--------------------------------------|
-| ![](https://i.imgur.com/bBioiFp.png) | ![](https://i.imgur.com/rZoESIk.png) |
+| Cornell Box (1000 rays/pixel)        | Box with Balls (1000 rays/pixel)     | Box with Balls (10000 rays/pixel)    |
+|--------------------------------------|--------------------------------------|--------------------------------------|
+| ![](https://i.imgur.com/bBioiFp.png) | ![](https://i.imgur.com/rZoESIk.png) | ![](https://i.imgur.com/OPW7fSE.png) |
