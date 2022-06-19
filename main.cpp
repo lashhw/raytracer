@@ -22,48 +22,7 @@ vec3 ray_color(const ray& r, const vec3& background, const hittable& world, int 
     return background;
 }
 
-void add_random_sphere(hittable_list &world) {
-    double x = 0;
-    double y = random_double(-7, 7);
-    double z = random_double(-7, 7);
-    int dice = rand() % 10;
-    shared_ptr<material> material;
-    if (dice <= 1) material = make_shared<dielectric>(1.5);
-    else if (dice <= 5) material = make_shared<metal>(vec3(random_double(), random_double(), random_double()), random_double(0, 0.5));
-    else material = make_shared<lambertian>(vec3(random_double(), random_double(), random_double()));
-    world.add(make_shared<sphere>(vec3(x, y, z), 0.5, material));
-}
-
 int main() {
-    /*
-    // scene with lots of balls
-    const double ASPECT_RATIO = 16.0 / 9.0;
-    const int image_width = 500;
-    const int image_height = image_width / ASPECT_RATIO;
-    const int samples_per_pixel = 2;
-    const int max_depth = 8;
-
-    hittable_list world;
-    shared_ptr<material> ground_material = make_shared<lambertian>(vec3(0.9, 0.9, 0.9));
-    shared_ptr<material> big_sphere_material = make_shared<metal>(vec3(0.7, 0.6, 0.5), 0.0);
-    shared_ptr<texture> earth_texture = make_shared<image_texture>("../earthmap.jpg");
-    shared_ptr<material> earth_material = make_shared<lambertian>(earth_texture);
-    world.add(make_shared<sphere>(vec3(1000.5,  0.0, 0.0), 1000, ground_material));
-    world.add(make_shared<sphere>(vec3(-1.5, 3, 3), 2, big_sphere_material));
-    world.add(make_shared<sphere>(vec3(-0.5, 0, -10), 1, earth_material));
-    for (int i = 1; i <= 30; i++) add_random_sphere(world);
-    shared_ptr<material> difflight = make_shared<diffuse_light>(vec3(10, 10, 10));
-    world.add(make_shared<xy_rect>(-1, 1, -5, -2, -5, difflight));
-
-    vec3 lookfrom(-6, 0, 25), lookat(0, 0, 0);
-    camera cam(
-        lookfrom, lookat, vec3(-1, 0, 0),
-        20, ASPECT_RATIO, 0.1, (lookat - lookfrom).length()
-    );
-
-    vec3 background(0.1, 0.1, 0.1);
-     */
-
     double aspect_ratio = 1.0;
     int image_width = 600;
     int image_height = image_width / aspect_ratio;
